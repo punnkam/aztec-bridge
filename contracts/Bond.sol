@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 /**
  * @title Bond
  * @author Tanay Patil
- * @dev An interface defining a conditional bond.
+ * @dev An interface defining a generic conditional bond.
  *
  * Bonds allow borrowers to create bonds in exchange for actions to be taken by a lender.
  * A bond is a locked account that can only unlocked with a corresponding bond claim.
