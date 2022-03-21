@@ -1,46 +1,39 @@
-# Advanced Sample Hardhat Project
+# AZTEC Cross-Chain Bridge
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+## Web3 is, ironically, not accessible to everyone
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+Most people cannot experience the full power of Web3. They suffer under the tyranny of high gas fees and are locked out of experiencing apps that live on separate chains. These chains have implemented optimizations and features that allow certain dApps to exist that would never be feasible on Mainnet. And they go unused because crosschain barriers are sky high.
 
-Try running some of the following tasks:
+Crosschain payments should be easy. Let's make transfers become instant using loans. Let's rely on a pool of lenders that live on other blockchains. Those lenders can provide instant liquidity on new blockchains, in exchange for a bond issued by borrowers. These lenders will take any arbitrary action on behalf of the borrower. The only requirement is each participating chain to eventually synchronize their state.
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
-```
+*No matter which chain users prefer to store their money on, every smart contract on every blockchain will be available to them.*
 
-# Etherscan verification
+## The Crosschain Loan Network
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+Here's how it works:
+1. **The bond is issued.** The system starts with the borrower, who specifies an action they want done. The borrower generates a bond with a predetermined claim key that is rewarded to whoever fulfills the order. 
+2. **The transaction is verified.** A lender sees this order and starts the verification process. Just like in real life, the lender must ensure that the transaction is valid and that the bond will eventually be accessible.
+3. **The bond is claimed and the order is fulfilled.** After the lender is confident that they will be able to withdraw, they perform the action and receive a claim key, which is an NFT. 
+4. **The bond is settled.** Once the bond and the claim key have arrived in the same blockchain, they can be combined. This triggers a withdrawal to the claimants account.
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
+This is the simple, general protocol. In this repository, I have also demonstrated how this can be pushed to the limit.
 
-```shell
-hardhat run --network ropsten scripts/sample-script.ts
-```
+ ## The Implementation: Zero-Knowledge Bonds
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
+We want our transactions to be publicly verifiable, but there are many reasons to hide their content. For example, traders who must publicly declare their trades are vulnerable to front-running and other price manipulations. 
 
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
+Zero-knowledge proofs allow us to prove things without knowing what they are. This repository uses the [AZTEC Protocol](https://aztec.network/). With AZTEC, the bonds that are created can keep their balance hidden while ensuring transactions are valid. Not even the contracts that facilitates this will know how much money is going where - only that the sheets are balanced. 
 
-# Performance optimizations
+At the same time, borrowers can grant "viewing keys" to lenders which grant them special access to see the contents of the account. Lenders can make strong verifications. 
 
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+And when it comes time to move data across blockchain boundaries, zero-knowledge proofs allow us to roll up hundreds of transactions into a single one. Users of the network can pay a fraction of the price of a direct transaction.
+
+*Privacy. Verifiability. Access.*
+
+----------------------------------------------------------------------------------------
+
+`contracts/` contains the bond contracts.
+
+`test/` demonstrates their usage.
+
+`yarn install && yarn test` to test the contracts.
